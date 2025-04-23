@@ -5,7 +5,16 @@
 #include <iostream>
 
 BookingForm::BookingForm(sf::RenderWindow& win, DialogueManager* manager)
-    : window(win), formManager(manager) {
+    : window(win), formManager(manager), shouldClose(false),
+    doneButton("DONE", { 20, 570 }, { 140, 40 }, sf::Color(50, 150, 50), sf::Color::White, [&]() {
+    std::cout << getFormType() << " Confirmed!\n";
+    openConfirmationWindow();
+        }),
+    cancelButton("CANCEL", { 200, 570 }, { 140, 40 }, sf::Color(180, 0, 0), sf::Color::White, [&]() {
+    std::cout << "Cancelled " << getFormType() << "\n";
+    shouldClose = true;  // ✅ במקום closeForm()
+        }) {
+
     font.loadFromFile("C:/Windows/Fonts/arialbd.ttf");
 }
 
@@ -27,8 +36,9 @@ void BookingForm::render(sf::RenderWindow& window) {
     }
 
     renderExtras(window);
-    UIRenderer::drawButton(window, font, "DONE", { 20, 570 }, sf::Color(50, 150, 50));
-    UIRenderer::drawButton(window, font, "CANCEL", { 200, 570 }, sf::Color(180, 0, 0));
+
+    doneButton.draw(window, font);
+    cancelButton.draw(window, font);
 }
 
 void BookingForm::handleInput(sf::Event event) {
@@ -47,6 +57,7 @@ void BookingForm::handleInput(sf::Event event) {
     }
     else if (event.type == sf::Event::MouseButtonPressed) {
         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
+
         int yOffset = 60;
         for (std::size_t i = 0; i < fieldLabels.size(); ++i) {
             if (sf::FloatRect(260, yOffset - 5, 250, 35).contains(mousePos)) {
@@ -56,17 +67,8 @@ void BookingForm::handleInput(sf::Event event) {
             yOffset += 50;
         }
 
-        if (sf::FloatRect(20, 570, 140, 40).contains(mousePos)) {
-            std::cout << getFormType() << " Confirmed!\n";
-            openConfirmationWindow();
-            return;
-        }
-
-        if (sf::FloatRect(200, 570, 140, 40).contains(mousePos)) {
-            std::cout << "Cancelled " << getFormType() << "\n";
-            formManager->closeForm();
-            return;
-        }
+        doneButton.handleClick(mousePos);
+        cancelButton.handleClick(mousePos);
 
         handleMouseExtras(mousePos);
     }
@@ -74,6 +76,10 @@ void BookingForm::handleInput(sf::Event event) {
 
 void BookingForm::openConfirmationWindow() {
     if (ConfirmationWindow::show(getFormType(), fieldLabels, userInput)) {
-        formManager->closeForm();
+        shouldClose = true;  // ✅ סגירה בטוחה כמו ב־CANCEL
     }
+}
+
+bool BookingForm::needsClose() const {
+    return shouldClose;
 }

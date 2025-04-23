@@ -1,26 +1,19 @@
-﻿#ifndef UIMANAGER_H
-#define UIMANAGER_H
-
+﻿#pragma once
 #include <SFML/Graphics.hpp>
+#include <vector>
 #include "DialogueManager.h"
+#include "UIButton.h"
 
 class UIManager {
 private:
     sf::RenderWindow& window;
     DialogueManager& formManager;
-
-    // ✅ Fix: Declare buttons and texts
     sf::Font font;
-    sf::RectangleShape buttonFlight, buttonHotel, buttonCar, buttonEvent, buttonTrain;
-    sf::Text textFlight, textHotel, textCar, textEvent, textTrain;
 
-    // ✅ Fix: Declare setupButton
-    void setupButton(sf::RectangleShape& button, sf::Text& text, const std::string& label, float y);
+    std::vector<UIButton> buttons;
 
 public:
     UIManager(sf::RenderWindow& win, DialogueManager& dManager);
-    void handleEvent(const sf::Event& event);
     void render();
+    void handleEvent(const sf::Event& event);
 };
-
-#endif // UIMANAGER_H

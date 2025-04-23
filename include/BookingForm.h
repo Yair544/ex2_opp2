@@ -1,20 +1,25 @@
-﻿// BookingForm.h
-#pragma once
+﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
+#include "UIButton.h"
 
-class DialogueManager; // forward declaration
+class DialogueManager; // Forward declaration
 
 class BookingForm {
 protected:
     sf::RenderWindow& window;
     DialogueManager* formManager;
+    sf::Font font;
+    sf::Clock cursorTimer;
+
     std::vector<std::string> fieldLabels;
     std::vector<std::string> userInput;
     int activeField = 0;
-    sf::Clock cursorTimer;
-    sf::Font font;
+    bool shouldClose = false;
+
+    UIButton doneButton;
+    UIButton cancelButton;
 
     virtual void renderExtras(sf::RenderWindow& window) {}
     virtual void handleMouseExtras(sf::Vector2f mousePos) {}
@@ -28,6 +33,5 @@ public:
     virtual std::string getFormType() const = 0;
     virtual void setDefaultValues() {}
     virtual void openConfirmationWindow();
-
-
+    bool needsClose() const;
 };

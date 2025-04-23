@@ -1,4 +1,5 @@
 ﻿#include "DialogueManager.h"
+#include <iostream>
 
 DialogueManager::DialogueManager() : activeForm(nullptr), isFormOpen(false) {}
 
@@ -32,25 +33,32 @@ void DialogueManager::closeForm() {
 
 void DialogueManager::handleFormEvents() {
     if (!isFormOpen || !formWindow.isOpen() || !activeForm) {
-        return; // ✅ Avoid handling events if form is closed
+        return; // אין טופס פתוח
     }
 
     sf::Event event;
     while (formWindow.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
-            closeForm();  // ✅ Use closeForm() instead of just closing the window
+            closeForm();  // סגירה רגילה של החלון
             return;
         }
 
-        if (activeForm) {  // ✅ Check again before accessing
+        if (activeForm) {
             activeForm->handleInput(event);
         }
     }
 
-    if (activeForm) {  // ✅ Prevent access if deleted
+    // ❗ בדיקה אם הטופס ביקש לסגור את עצמו (למשל אחרי אישור)
+    if (activeForm && activeForm->needsClose()) {
+        closeForm();
+        return;
+    }
+
+    if (activeForm) {
         formWindow.clear(sf::Color::White);
         activeForm->render(formWindow);
         formWindow.display();
     }
 }
+
 

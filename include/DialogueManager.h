@@ -1,22 +1,18 @@
-#ifndef DIALOGUEMANAGER_H
-#define DIALOGUEMANAGER_H
-
-#include "BookingForm.h"
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <memory>
-#include <iostream>
+#include "BookingForm.h"
 
 class DialogueManager {
 private:
     std::unique_ptr<BookingForm> activeForm;
-    sf::RenderWindow formWindow;
     bool isFormOpen;
+    sf::RenderWindow formWindow;
 
 public:
     DialogueManager();
-    void setActiveForm(std::unique_ptr<BookingForm> form);
-    void handleFormEvents();
-    void closeForm();
-};
 
-#endif // DIALOGUEMANAGER_H
+    void setActiveForm(std::unique_ptr<BookingForm> form);
+    void closeForm();
+    void handleFormEvents();
+};
