@@ -1,80 +1,91 @@
-#pragma once
+ן»¿#pragma once
 #include <SFML/Graphics.hpp>
 #include <memory>
 #include <string>
+#include <sstream>
 #include "Validator.h"
+#include "FormFieldBase.h"
 
 template<typename T>
-class FormField {
+class FormField : public FormFieldBase {
 public:
     FormField(const std::string& lbl, sf::Vector2f pos, std::unique_ptr<Validator<T>> val)
-        : label(lbl), position(pos), m_validator(std::move(val)), isActive(false), isValid(true) {
+        : value_m{}, m_validator(std::move(val)) {
+        label_m = lbl;
+        position_m = pos;
     }
 
-    void draw(sf::RenderWindow& window, sf::Font& font, bool cursorVisible = false) {
-        sf::Text labelText(label, font, 18);
-        labelText.setPosition(position);
+    void draw(sf::RenderWindow& window, sf::Font& font, bool cursorVisible = false) override {
+        sf::Text labelText(label_m, font, 18);
+        labelText.setPosition(position_m);
         labelText.setFillColor(sf::Color::Black);
         window.draw(labelText);
 
         sf::RectangleShape box(sf::Vector2f(300, 35));
-        box.setPosition(position.x + 160, position.y);
+        box.setPosition(position_m.x + 160, position_m.y);
         box.setFillColor(sf::Color::White);
         box.setOutlineThickness(2);
-        box.setOutlineColor(isActive ? sf::Color(0, 120, 255) : (isValid ? sf::Color(160, 160, 160) : sf::Color::Red));
+        box.setOutlineColor(isActive_m ? sf::Color(0, 120, 255) : (isValid_m ? sf::Color(160, 160, 160) : sf::Color::Red));
         window.draw(box);
 
-        std::string valStr = value;
-        if (isActive && cursorVisible) valStr += "|";
+        std::string valStr = inputBuffer_m;
+        if (isActive_m && cursorVisible) valStr += "|";
         sf::Text valText(valStr, font, 16);
-        valText.setPosition(position.x + 165, position.y + 5);
+        valText.setPosition(position_m.x + 165, position_m.y + 5);
         valText.setFillColor(sf::Color::Black);
         window.draw(valText);
     }
 
-    void setActive(bool active) {
-        isActive = active;
+    void setActive(bool active) override {
+        isActive_m = active;
     }
 
-    void handleInput(sf::Event event) {
-        if (!isActive) return;
+    void handleInput(sf::Event event) override {
+        if (!isActive_m) return;
 
         if (event.type == sf::Event::TextEntered) {
             if (event.text.unicode == '\b') {
-                if (!value.empty()) value.pop_back();
+                if (!inputBuffer_m.empty()) inputBuffer_m.pop_back();
             }
             else if (event.text.unicode >= 32 && event.text.unicode < 128) {
-                value += static_cast<char>(event.text.unicode);
+                inputBuffer_m += static_cast<char>(event.text.unicode);
             }
         }
     }
 
-    void validate() {
-        isValid = m_validator->validate(value); // קריאה לוולידטור המתאים לשדה
+    void validate() override {
+        try {
+            set(inputBuffer_m);
+            isValid_m = m_validator->validate(value_m);
+        }
+        catch (...) {
+            isValid_m = false;
+        }
     }
 
-    bool isFieldValid() const {
-        return isValid;
+    void set(const std::string& str) override {
+        std::istringstream iss(str);
+        iss >> value_m;
     }
 
-    std::string getLabel() const {
-        return label;
+    bool isFieldValid() const override {
+        return isValid_m;
     }
 
-    std::string getValue() const {
-        return value;
+    std::string getLabel() const override {
+        return label_m;
     }
 
-    bool containsPoint(const sf::Vector2f& clickPos) const {
-        return clickPos.x > position.x && clickPos.x < position.x + 300 &&
-            clickPos.y > position.y && clickPos.y < position.y + 35;
+    std::string getValue() const override {
+        return inputBuffer_m;
+    }
+
+    bool containsPoint(const sf::Vector2f& clickPos) const override {
+        return clickPos.x > position_m.x && clickPos.x < position_m.x + 300 &&
+            clickPos.y > position_m.y && clickPos.y < position_m.y + 35;
     }
 
 private:
-    std::string label;
-    sf::Vector2f position;
-    T value; // ערך השדה
-    bool isActive; // קובע אם השדה פעיל
-    bool isValid; // קובע אם השדה תקין
-    std::unique_ptr<Validator<T>> m_validator; // וולידטור לטיפוס הספציפי של השדה
+    T value_m{};
+    std::unique_ptr<Validator<T>> m_validator;
 };

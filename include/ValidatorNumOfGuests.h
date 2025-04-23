@@ -1,7 +1,7 @@
 #pragma once
 #include "Validator.h"
 
-class GuestsValidator : public Validator<std::string> {
+class ValidatorNumOfGuests : public Validator<std::string> {
 public:
     bool validate(const std::string& value) const override {
         try {

@@ -8,10 +8,10 @@ BookingForm::BookingForm(sf::RenderWindow& win, DialogueManager* mng)
     font.loadFromFile("C:/Windows/Fonts/arialbd.ttf");
 }
 
-void BookingForm::addField(const std::string& label, sf::Vector2f pos, std::unique_ptr<Validator<std::string>> validator) {
-    // כאן תיווסף שדה חדש עם הוולידטור המתאים
-    fields.emplace_back(std::make_unique<FormField<std::string>>(label, pos, std::move(validator)));
-}
+//void BookingForm::addField(const std::string& label, sf::Vector2f pos, std::unique_ptr<Validator<T>> validator) {
+//    // כאן תיווסף שדה חדש עם הוולידטור המתאים
+//    fields.emplace_back(std::make_unique<FormField<T>>(label, pos, std::move(validator)));
+//}
 
 void BookingForm::finalizeFields() {
     if (!fields.empty()) {

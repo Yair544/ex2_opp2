@@ -1,8 +1,8 @@
-﻿// BookingForm.h
-#pragma once
+﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <memory>
+#include "FormFieldBase.h"  // ⬅️ חדש: בסיס מופשט של כל שדה
 #include "FormField.h"
 #include "Validator.h"
 
@@ -18,17 +18,21 @@ public:
     void render(sf::RenderWindow& win);
     void handleInput(sf::Event event);
     void openConfirmationWindow();
-    void addField(const std::string& label, sf::Vector2f pos, std::unique_ptr<Validator<std::string>> validator);
 
+    // ✅ addField כללי לכל טיפוס
+    template<typename T>
+    void addField(const std::string& label, sf::Vector2f pos, std::unique_ptr<Validator<T>> validator) {
+        fields.emplace_back(std::make_unique<FormField<T>>(label, pos, std::move(validator)));
+    }
 
 protected:
     void validateAllFields();
     bool allValid() const;
     std::vector<std::string> getErrors() const;
-    void finalizeFields();  // נועד להפעלה אוטומטית אחרי יצירת שדות
+    void finalizeFields();
 
 private:
-    std::vector<std::unique_ptr<FormField<std::string>>> fields;
+    std::vector<std::unique_ptr<FormFieldBase>> fields; // ⬅️ שינוי מ-FormField<std::string>
     std::size_t activeIndex = 0;
 
     sf::Clock cursorTimer;

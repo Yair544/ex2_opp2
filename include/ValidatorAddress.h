@@ -2,7 +2,7 @@
 #include "Validator.h"
 #include <regex>
 
-class AddressValidator : public Validator<std::string> {
+class ValidatorAddress : public Validator<std::string> {
 public:
     bool validate(const std::string& value) const override {
         // מתאם כתובת לדפוס מסויים

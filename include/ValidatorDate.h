@@ -2,7 +2,7 @@
 #include "Validator.h"
 #include <regex>
 
-class DateValidator : public Validator<std::string> {
+class ValidatorDate : public Validator<std::string> {
 public:
     bool validate(const std::string& value) const override {
         // מאמת פורמט של תאריך (YYYY-MM-DD)
