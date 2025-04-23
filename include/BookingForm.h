@@ -1,40 +1,33 @@
-﻿#ifndef BOOKINGFORM_H
-#define BOOKINGFORM_H
-
+﻿// BookingForm.h
+#pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
 #include <string>
-#include <array>
-class DialogueManager;
 
-struct PersonalInfo {
-    std::string name;
-    std::string id;
-    std::string address;
-    std::string email;
-};
+class DialogueManager; // forward declaration
 
 class BookingForm {
 protected:
-    std::vector<std::string> fieldLabels;
-    std::vector<std::string> userInput;
-    std::size_t activeField = 0;
-    sf::Clock cursorTimer;
-    bool showCursor = true;
-
     sf::RenderWindow& window;
     DialogueManager* formManager;
-    PersonalInfo personalInfo;
+    std::vector<std::string> fieldLabels;
+    std::vector<std::string> userInput;
+    int activeField = 0;
+    sf::Clock cursorTimer;
+    sf::Font font;
 
-    virtual void setDefaultValues()=0 ;
-    void openConfirmationWindow();
+    virtual void renderExtras(sf::RenderWindow& window) {}
+    virtual void handleMouseExtras(sf::Vector2f mousePos) {}
 
 public:
     BookingForm(sf::RenderWindow& win, DialogueManager* manager);
     virtual ~BookingForm() = default;
-    virtual std::string getFormType() const = 0;
-    virtual void render(sf::RenderWindow& window) = 0;
-    virtual void handleInput(sf::Event event) = 0;
-};
 
-#endif // BOOKINGFORM_H
+    virtual void render(sf::RenderWindow& window);
+    virtual void handleInput(sf::Event event);
+    virtual std::string getFormType() const = 0;
+    virtual void setDefaultValues() {}
+    virtual void openConfirmationWindow();
+
+
+};

@@ -1,26 +1,16 @@
-﻿#ifndef FLIGHTBOOKINGFORM_H
-#define FLIGHTBOOKINGFORM_H
-
+﻿#pragma once
 #include "BookingForm.h"
-#include <SFML/Graphics.hpp>
+#include "SelectableButtonGroup.h"
 
 class FlightBookingForm : public BookingForm {
-private:    
-    void setDefaultValues() override;
-    
-    std::array<std::pair<std::string, bool>, 5> timeSelection = {
-        std::make_pair("Morning", false),
-        std::make_pair("Noon", false),
-        std::make_pair("Evening", false),
-        std::make_pair("Night", false),
-        std::make_pair("Don't Care", true)  // ✅ Default selection
-    };
+private:
+    SelectableButtonGroup timeSelector;
+
+    void setDefaultValues();
+    void renderExtras(sf::RenderWindow& window) override;
+    void handleMouseExtras(sf::Vector2f mousePos) override;
 
 public:
-    FlightBookingForm(sf::RenderWindow& win, DialogueManager* manager);  // ✅ Updated constructor
+    FlightBookingForm(sf::RenderWindow& win, DialogueManager* manager);
     std::string getFormType() const override;
-    void render(sf::RenderWindow& window) override;
-    void handleInput(sf::Event event) override;
 };
-
-#endif // FLIGHTBOOKINGFORM_H

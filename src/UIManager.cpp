@@ -72,7 +72,7 @@ void UIManager::handleEvent(const sf::Event& event) {
             formManager.setActiveForm(std::make_unique<HotelBookingForm>(window, &formManager));
         }
 
-        if (buttonCar.getGlobalBounds().contains(mousePos)) {
+       /* if (buttonCar.getGlobalBounds().contains(mousePos)) {
             std::cout << "Car Rental Button Clicked!" << std::endl;
             formManager.setActiveForm(std::make_unique<CarRentalForm>(window, &formManager));
         }
@@ -85,7 +85,7 @@ void UIManager::handleEvent(const sf::Event& event) {
         if (buttonTrain.getGlobalBounds().contains(mousePos)) {
             std::cout << "Train Booking Button Clicked!" << std::endl;
             formManager.setActiveForm(std::make_unique<TrainBookingForm>(window, &formManager));
-        }
+        }*/
         
     }
 }
