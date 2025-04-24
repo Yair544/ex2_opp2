@@ -1,5 +1,4 @@
 ﻿#include "BookingForm.h"
-#include "DialogueManager.h"
 #include "ConfirmationWindow.h"
 #include "UIRenderer.h"
 #include <iostream>
@@ -7,14 +6,20 @@
 BookingForm::BookingForm(sf::RenderWindow& win, DialogueManager* manager)
     : window(win), formManager(manager), shouldClose(false),
     doneButton("DONE", { 20, 570 }, { 140, 40 }, sf::Color(50, 150, 50), sf::Color::White, [&]() {
-    std::cout << getFormType() << " Confirmed!\n";
+
+    for (auto& field : fields) field->validate();
+    bool allValid = std::all_of(fields.begin(), fields.end(),
+        [](const std::unique_ptr<FormFieldBase>& f) { return f->isFieldValid(); });
+    if (allValid) {
+        std::cout << getFormType() << " Confirmed!\n";
+    }
     openConfirmationWindow();
+
         }),
     cancelButton("CANCEL", { 200, 570 }, { 140, 40 }, sf::Color(180, 0, 0), sf::Color::White, [&]() {
     std::cout << "Cancelled " << getFormType() << "\n";
-    shouldClose = true;  // ✅ במקום closeForm()
+    shouldClose = true;
         }) {
-
     font.loadFromFile("C:/Windows/Fonts/arialbd.ttf");
 }
 
@@ -23,63 +28,67 @@ void BookingForm::render(sf::RenderWindow& window) {
     UIRenderer::drawLabel(window, font, getFormType(), { 20, 10 }, 26);
 
     bool cursorVisible = (cursorTimer.getElapsedTime().asMilliseconds() % 1000 < 500);
-    int yOffset = 60;
 
-    for (std::size_t i = 0; i < fieldLabels.size(); ++i) {
-        std::string displayText = userInput[i];
-        if (i == activeField && cursorVisible)
-            displayText += "|";
-
-        UIRenderer::drawLabel(window, font, fieldLabels[i], { 20, (float)yOffset });
-        UIRenderer::drawInputField(window, font, displayText, { 240, (float)yOffset - 5 }, i == activeField);
-        yOffset += 50;
+    for (std::size_t i = 0; i < fields.size(); ++i) {
+        fields[i]->draw(window, font, i == activeField && cursorVisible);
     }
 
     renderExtras(window);
-
     doneButton.draw(window, font);
     cancelButton.draw(window, font);
 }
 
 void BookingForm::handleInput(sf::Event event) {
-    if (event.type == sf::Event::TextEntered) {
-        if (event.text.unicode == '\b' && !userInput[activeField].empty()) {
-            userInput[activeField].pop_back();
+    if (event.type == sf::Event::TextEntered || event.type == sf::Event::KeyPressed) {
+        if (event.type == sf::Event::KeyPressed && event.key.code == sf::Keyboard::Tab) {
+            fields[activeField]->setActive(false);  // כיבוי שדה נוכחי
+            activeField = (activeField + 1) % fields.size();
+            fields[activeField]->setActive(true);   // הפעלה של הבא
         }
-        else if (event.text.unicode >= 32 && event.text.unicode < 128) {
-            userInput[activeField] += static_cast<char>(event.text.unicode);
-        }
-    }
-    else if (event.type == sf::Event::KeyPressed) {
-        if (event.key.code == sf::Keyboard::Tab) {
-            activeField = (activeField + 1) % userInput.size();
+        else {
+            fields[activeField]->handleInput(event);
         }
     }
     else if (event.type == sf::Event::MouseButtonPressed) {
         sf::Vector2f mousePos(event.mouseButton.x, event.mouseButton.y);
 
-        int yOffset = 60;
-        for (std::size_t i = 0; i < fieldLabels.size(); ++i) {
-            if (sf::FloatRect(260, yOffset - 5, 250, 35).contains(mousePos)) {
+        for (std::size_t i = 0; i < fields.size(); ++i) {
+            if (fields[i]->containsPoint(mousePos)) {
+                // כיבוי של כל השדות
+                for (auto& f : fields)
+                    f->setActive(false);
+
+                // הפעלת השדה שנבחר
                 activeField = i;
+                fields[i]->setActive(true);
                 return;
             }
-            yOffset += 50;
         }
 
         doneButton.handleClick(mousePos);
         cancelButton.handleClick(mousePos);
-
         handleMouseExtras(mousePos);
     }
 }
 
+
 void BookingForm::openConfirmationWindow() {
-    if (ConfirmationWindow::show(getFormType(), fieldLabels, userInput)) {
-        shouldClose = true;  // ✅ סגירה בטוחה כמו ב־CANCEL
+    std::vector<std::string> labels;
+    std::vector<std::string> values;
+    std::vector<bool> validities;
+
+    for (const auto& field : fields) {
+        labels.push_back(field->getLabel());
+        values.push_back(field->getValue());
+        validities.push_back(field->isFieldValid());
+    }
+
+    if (ConfirmationWindow::show(getFormType(), labels, values, validities)) {
+        shouldClose = true;
     }
 }
 
 bool BookingForm::needsClose() const {
     return shouldClose;
 }
+

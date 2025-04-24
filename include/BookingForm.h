@@ -1,8 +1,9 @@
 ﻿#pragma once
 #include <SFML/Graphics.hpp>
 #include <vector>
-#include <string>
+#include <memory>
 #include "UIButton.h"
+#include "FormFieldBase.h"
 
 class DialogueManager; // Forward declaration
 
@@ -13,25 +14,23 @@ protected:
     sf::Font font;
     sf::Clock cursorTimer;
 
-    std::vector<std::string> fieldLabels;
-    std::vector<std::string> userInput;
+    std::vector<std::unique_ptr<FormFieldBase>> fields;
     int activeField = 0;
-    bool shouldClose = false;
 
     UIButton doneButton;
     UIButton cancelButton;
+    bool shouldClose;
 
-    virtual void renderExtras(sf::RenderWindow& window) {}
-    virtual void handleMouseExtras(sf::Vector2f mousePos) {}
+    virtual void renderExtras(sf::RenderWindow& window) = 0;
+    virtual void handleMouseExtras(sf::Vector2f mousePos) = 0;
 
 public:
     BookingForm(sf::RenderWindow& win, DialogueManager* manager);
     virtual ~BookingForm() = default;
 
-    virtual void render(sf::RenderWindow& window);
-    virtual void handleInput(sf::Event event);
-    virtual std::string getFormType() const = 0;
-    virtual void setDefaultValues() {}
-    virtual void openConfirmationWindow();
+    void render(sf::RenderWindow& window);
+    void handleInput(sf::Event event);
+    void openConfirmationWindow();
     bool needsClose() const;
+    virtual std::string getFormType() const = 0;
 };

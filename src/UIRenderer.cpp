@@ -1,9 +1,10 @@
 #include "UIRenderer.h"
 
 void UIRenderer::drawLabel(sf::RenderWindow& window, const sf::Font& font,
-    const std::string& text, sf::Vector2f pos, unsigned size) {
+    const std::string& text, sf::Vector2f pos,
+    unsigned size, sf::Color color) {
     sf::Text label(text, font, size);
-    label.setFillColor(sf::Color(60, 60, 60));
+    label.setFillColor(color);
     label.setPosition(pos);
     window.draw(label);
 }

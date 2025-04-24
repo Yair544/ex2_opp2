@@ -5,7 +5,8 @@
 class UIRenderer {
 public:
     static void drawLabel(sf::RenderWindow& window, const sf::Font& font,
-        const std::string& text, sf::Vector2f pos, unsigned size = 18);
+        const std::string& text, sf::Vector2f pos,
+        unsigned size, sf::Color color = sf::Color(60, 60, 60));
 
     static void drawInputField(sf::RenderWindow& window, const sf::Font& font,
         const std::string& value, sf::Vector2f pos,
