@@ -1,14 +1,21 @@
 #pragma once
 #include "Validator.h"
-#include <regex>
+#include "Date.h"
 
-class ValidatorDate : public Validator<std::string> {
+class ValidatorDate : public Validator<Date> {
 public:
-    bool validate(const std::string& value) const override {
-        return std::regex_match(value, std::regex("^\\d{4}-\\d{2}-\\d{2}$"));
+    bool validate(const Date& date) const override {
+        if (date.year < 1900 || date.year > 2100)
+            return false;
+        if (date.month < 1 || date.month > 12)
+            return false;
+        if (date.day < 1 || date.day > 31)
+            return false;
+
+        return true;
     }
 
     std::string getErrorMessage() const override {
-        return "Date must be in YYYY-MM-DD format.";
+        return "Date must be a valid date between 1900 and 2100.";
     }
 };

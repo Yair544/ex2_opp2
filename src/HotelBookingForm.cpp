@@ -19,8 +19,8 @@ HotelBookingForm::HotelBookingForm(sf::RenderWindow& win, DialogueManager* manag
     fields.emplace_back(std::make_unique<FormField<std::string>>("Address:", sf::Vector2f(20, 160), std::make_unique<ValidatorAddress>()));
     fields.emplace_back(std::make_unique<FormField<std::string>>("Email:", sf::Vector2f(20, 210), std::make_unique<ValidatorEmail>()));
     fields.emplace_back(std::make_unique<FormField<std::string>>("Hotel Name:", sf::Vector2f(20, 260), std::make_unique<ValidatorName>()));
-    fields.emplace_back(std::make_unique<FormField<std::string>>("Check-in Date:", sf::Vector2f(20, 310), std::make_unique<ValidatorDate>()));
-    fields.emplace_back(std::make_unique<FormField<std::string>>("Check-out Date:", sf::Vector2f(20, 360), std::make_unique<ValidatorDate>()));
+    fields.emplace_back(std::make_unique<FormField<Date>>("Check-in Date:", sf::Vector2f(20, 310), std::make_unique<ValidatorDate>()));
+    fields.emplace_back(std::make_unique<FormField<Date>>("Check-out Date:", sf::Vector2f(20, 360), std::make_unique<ValidatorDate>()));
     fields.emplace_back(std::make_unique<FormField<int>>("Number of Guests:", sf::Vector2f(20, 410), std::make_unique<ValidatorNumOfGuests>()));
     fields.emplace_back(std::make_unique<FormField<std::string>>("Room Type:", sf::Vector2f(20, 460), std::make_unique<ValidatorRomeType>()));
 

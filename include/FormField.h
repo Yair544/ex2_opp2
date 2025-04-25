@@ -5,6 +5,8 @@
 #include <sstream>
 #include "Validator.h"
 #include "FormFieldBase.h"
+#include "Date.h"
+
 
 template<typename T>
 class FormField : public FormFieldBase {
@@ -58,7 +60,6 @@ public:
     }
 
     void validate() override {
-        // לא נדרש חישוב כאן – isFieldValid מחשב ישירות
     }
 
     void set(const std::string& str) override {
@@ -95,4 +96,19 @@ public:
 
 private:
     std::unique_ptr<Validator<T>> m_validator;
+    T value_m{};
 };
+
+template<>
+inline void FormField<Date>::set(const std::string& str) {
+    if (!Date::fromString(str, value_m)) {
+        throw std::runtime_error("Invalid date format");
+    }
+    inputBuffer_m = str;
+}
+
+
+template<>
+inline std::string FormField<Date>::getValue() const {
+    return value_m.toString();
+}

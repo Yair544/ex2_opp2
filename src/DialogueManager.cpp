@@ -12,7 +12,7 @@ void DialogueManager::setActiveForm(std::unique_ptr<BookingForm> form) {
 
     if (!formWindow.isOpen()) {  // ✅ Fix: Prevent reopening if already open
 
-        formWindow.create(sf::VideoMode(650, 700), activeForm->getFormType());
+        formWindow.create(sf::VideoMode(850, 900), activeForm->getFormType());
     }
 }
 

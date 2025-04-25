@@ -19,7 +19,7 @@ FlightBookingForm::FlightBookingForm(sf::RenderWindow& win, DialogueManager* man
     fields.emplace_back(std::make_unique<FormField<std::string>>("Email:", sf::Vector2f(20, 210), std::make_unique<ValidatorEmail>()));
     fields.emplace_back(std::make_unique<FormField<std::string>>("Departure Airport:", sf::Vector2f(20, 260), std::make_unique<ValidatorName>()));
     fields.emplace_back(std::make_unique<FormField<std::string>>("Arrival Airport:", sf::Vector2f(20, 310), std::make_unique<ValidatorName>()));
-    fields.emplace_back(std::make_unique<FormField<std::string>>("Departure Date:", sf::Vector2f(20, 360), std::make_unique<ValidatorDate>()));
+    fields.emplace_back(std::make_unique<FormField<Date>>("Departure Date:", sf::Vector2f(20, 360), std::make_unique<ValidatorDate>()));
     fields.emplace_back(std::make_unique<FormField<std::string>>("Preferred Time:", sf::Vector2f(20, 410), std::make_unique<ValidatorTimePreference>()));
 
     setDefaultValues();
