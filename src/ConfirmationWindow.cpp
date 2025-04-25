@@ -7,19 +7,20 @@
 bool ConfirmationWindow::show(const std::string& title,
     const std::vector<std::string>& labels,
     const std::vector<std::string>& values,
-    const std::vector<bool>& validities) {
+    const std::vector<bool>& validities,
+    const std::vector<std::string>& errorMessages) {
 
-    sf::RenderWindow confirmWindow(sf::VideoMode(500, 600), "Confirm " + title);
+    sf::RenderWindow confirmWindow(sf::VideoMode(700, 700), "Confirm " + title);
     sf::Font font;
     font.loadFromFile("C:/Windows/Fonts/arialbd.ttf");
 
     bool approved = false;
     bool requestClose = false;
 
-    UIButton approveButton("APPROVE", { 100, 500 }, { 120, 40 },
+    UIButton approveButton("APPROVE", { 100, 620 }, { 120, 40 },
         sf::Color(50, 150, 50), sf::Color::White);
 
-    UIButton cancelButton("CANCEL", { 280, 500 }, { 120, 40 },
+    UIButton cancelButton("CANCEL", { 280, 620 }, { 120, 40 },
         sf::Color(180, 0, 0), sf::Color::White);
 
     approveButton.setOnClick([&]() {
@@ -63,6 +64,18 @@ bool ConfirmationWindow::show(const std::string& title,
 
             UIRenderer::drawLabel(confirmWindow, font, line, { 50, yOffset }, 18, color);
             yOffset += 30;
+        }
+
+        // אם יש הודעות שגיאה, נציג אותן מתחת לכל השדות
+        if (!errorMessages.empty()) {
+            yOffset += 20;
+            UIRenderer::drawLabel(confirmWindow, font, "Issues Detected:", { 50, yOffset }, 20, sf::Color::Red);
+            yOffset += 30;
+
+            for (const auto& msg : errorMessages) {
+                UIRenderer::drawLabel(confirmWindow, font, "- " + msg, { 60, yOffset }, 16, sf::Color::Red);
+                yOffset += 22;
+            }
         }
 
         approveButton.draw(confirmWindow, font);

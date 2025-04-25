@@ -76,14 +76,20 @@ void BookingForm::openConfirmationWindow() {
     std::vector<std::string> labels;
     std::vector<std::string> values;
     std::vector<bool> validities;
+    std::vector<std::string> errorMessages;
 
     for (const auto& field : fields) {
         labels.push_back(field->getLabel());
         values.push_back(field->getValue());
-        validities.push_back(field->isFieldValid());
+        bool isValid = field->isFieldValid();
+        validities.push_back(isValid);
+
+        if (!isValid) {
+            errorMessages.push_back(field->getLabel() + ": " + field->getErrorMessage());
+        }
     }
 
-    if (ConfirmationWindow::show(getFormType(), labels, values, validities)) {
+    if (ConfirmationWindow::show(getFormType(), labels, values, validities, errorMessages)) {
         shouldClose = true;
     }
 }

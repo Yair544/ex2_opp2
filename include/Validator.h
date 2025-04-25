@@ -4,6 +4,7 @@
 template<typename T>
 class Validator {
 public:
-    virtual bool validate(const T& value) const = 0; // פונקציה וירטואלית טהורה
-    virtual ~Validator() = default; // דה-קונסטרקטור וירטואלי
+    virtual bool validate(const T& value) const = 0;
+    virtual std::string getErrorMessage() const { return "Invalid value"; }
+    virtual ~Validator() = default;
 };

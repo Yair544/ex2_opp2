@@ -13,4 +13,5 @@ private:
 public:
     FlightBookingForm(sf::RenderWindow& win, DialogueManager* manager);
     std::string getFormType() const override;
+
 };

@@ -4,7 +4,11 @@
 class ValidatorRomeType : public Validator<std::string> {
 public:
     bool validate(const std::string& value) const override {
-        // בודק אם סוג החדר שנבחר נמצא ברשימה
-        return value == "Single Room" || value == "Double Room" || value == "Family Room" || value == "Presidential Suite";
+        return value == "Single Room" || value == "Double Room" ||
+            value == "Family Room" || value == "Presidential Suite";
+    }
+
+    std::string getErrorMessage() const override {
+        return "Room type must be Single, Double, Family, or Presidential Suite.";
     }
 };

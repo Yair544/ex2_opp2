@@ -10,7 +10,7 @@ template<typename T>
 class FormField : public FormFieldBase {
 public:
     FormField(const std::string& lbl, sf::Vector2f pos, std::unique_ptr<Validator<T>> val)
-        : value_m{}, m_validator(std::move(val)) {
+        : m_validator(std::move(val)) {
         label_m = lbl;
         position_m = pos;
     }
@@ -25,7 +25,9 @@ public:
         box.setPosition(position_m.x + 160, position_m.y);
         box.setFillColor(sf::Color::White);
         box.setOutlineThickness(2);
-        box.setOutlineColor(isActive_m ? sf::Color(0, 120, 255) : (isValid_m ? sf::Color(160, 160, 160) : sf::Color::Red));
+        sf::Color outlineColor = isActive_m ? sf::Color(0, 120, 255)
+            : (isFieldValid() ? sf::Color(160, 160, 160) : sf::Color::Red);
+        box.setOutlineColor(outlineColor);
         window.draw(box);
 
         std::string valStr = inputBuffer_m;
@@ -34,6 +36,8 @@ public:
         valText.setPosition(position_m.x + 165, position_m.y + 5);
         valText.setFillColor(sf::Color::Black);
         window.draw(valText);
+
+        // שים לב: לא מצוירת כאן הודעת שגיאה, אלא רק בחלון
     }
 
     void setActive(bool active) override {
@@ -54,22 +58,22 @@ public:
     }
 
     void validate() override {
-        try {
-            set(inputBuffer_m);
-            isValid_m = m_validator->validate(value_m);
-        }
-        catch (...) {
-            isValid_m = false;
-        }
+        // לא נדרש חישוב כאן – isFieldValid מחשב ישירות
     }
 
     void set(const std::string& str) override {
-        std::istringstream iss(str);
-        iss >> value_m;
+        inputBuffer_m = str;
     }
 
     bool isFieldValid() const override {
-        return isValid_m;
+        T tempValue{};
+        std::istringstream iss(inputBuffer_m);
+
+        if (!(iss >> tempValue)) {
+            return false;
+        }
+
+        return m_validator->validate(tempValue);
     }
 
     std::string getLabel() const override {
@@ -80,12 +84,15 @@ public:
         return inputBuffer_m;
     }
 
+    std::string getErrorMessage() const override {
+        return m_validator->getErrorMessage();
+    }
+
     bool containsPoint(const sf::Vector2f& clickPos) const override {
         return clickPos.x > position_m.x && clickPos.x < position_m.x + 300 &&
             clickPos.y > position_m.y && clickPos.y < position_m.y + 35;
     }
 
 private:
-    T value_m{};
     std::unique_ptr<Validator<T>> m_validator;
 };

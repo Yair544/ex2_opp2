@@ -1,15 +1,13 @@
 #pragma once
 #include "Validator.h"
 
-class ValidatorNumOfGuests : public Validator<std::string> {
+class ValidatorNumOfGuests : public Validator<int> {
 public:
-    bool validate(const std::string& value) const override {
-        try {
-            int guests = std::stoi(value);
-            return guests >= 1 && guests <= 10;
-        }
-        catch (...) {
-            return false;
-        }
+    bool validate(const int& guests) const override {
+        return guests >= 1 && guests <= 15;
+    }
+
+    std::string getErrorMessage() const override {
+        return "Number of guests must be between 1 and 15.";
     }
 };

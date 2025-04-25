@@ -7,6 +7,7 @@
 #include "ValidatorEmail.h"
 #include "ValidatorDate.h"
 #include <ctime>
+#include <ValidatorTimePreference.h>
 
 FlightBookingForm::FlightBookingForm(sf::RenderWindow& win, DialogueManager* manager)
     : BookingForm(win, manager),
@@ -19,7 +20,7 @@ FlightBookingForm::FlightBookingForm(sf::RenderWindow& win, DialogueManager* man
     fields.emplace_back(std::make_unique<FormField<std::string>>("Departure Airport:", sf::Vector2f(20, 260), std::make_unique<ValidatorName>()));
     fields.emplace_back(std::make_unique<FormField<std::string>>("Arrival Airport:", sf::Vector2f(20, 310), std::make_unique<ValidatorName>()));
     fields.emplace_back(std::make_unique<FormField<std::string>>("Departure Date:", sf::Vector2f(20, 360), std::make_unique<ValidatorDate>()));
-    fields.emplace_back(std::make_unique<FormField<std::string>>("Preferred Time:", sf::Vector2f(20, 410), std::make_unique<ValidatorName>()));
+    fields.emplace_back(std::make_unique<FormField<std::string>>("Preferred Time:", sf::Vector2f(20, 410), std::make_unique<ValidatorTimePreference>()));
 
     setDefaultValues();
 }
@@ -58,3 +59,5 @@ void FlightBookingForm::handleMouseExtras(sf::Vector2f mousePos) {
         fields[7]->set(timeSelector.getSelected());  // Update Preferred Time
     }
 }
+
+

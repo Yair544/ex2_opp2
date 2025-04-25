@@ -18,4 +18,8 @@ public:
         }
         return sum % 10 == 0;
     }
+
+    std::string getErrorMessage() const override {
+        return "ID must be 9 digits with a valid Israeli check digit.";
+    }
 };
