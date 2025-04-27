@@ -1,20 +1,12 @@
-//#ifndef EVENTBOOKINGFORM_H
-//#define EVENTBOOKINGFORM_H
-//
-//#include "BookingForm.h"
-//#include <array>
-//#include <string>
-//
-//class EventBookingForm : public BookingForm {
-//public:
-//    EventBookingForm(sf::RenderWindow& win, DialogueManager* manager);
-//    std::string getFormType() const override;
-//    void render(sf::RenderWindow& window) override;
-//    void handleInput(sf::Event event) override;
-//private:
-//    void setDefaultValues() override;
-//    std::array<std::string, 5> SeatingTypeSelection = { "General Admission", "Front Row", "VIP Section", "Aisle Seat" };
-//    int selectedSeatingType = 0;
-//};
-//
-//#endif // EVENTBOOKINGFORM_H
+#pragma once
+#include "BookingForm.h"
+#include "DialogueManager.h"
+
+class EventBookingForm : public BookingForm {
+public:
+    EventBookingForm(sf::RenderWindow& win, DialogueManager* manager);
+
+    std::string getFormType() const override;
+    void renderExtras(sf::RenderWindow& window) override;
+    void handleMouseExtras(sf::Vector2f mousePos) override;
+};

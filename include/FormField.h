@@ -3,10 +3,10 @@
 #include <memory>
 #include <string>
 #include <sstream>
+#include <type_traits>  // נדרש ל-if constexpr
 #include "Validator.h"
 #include "FormFieldBase.h"
 #include "Date.h"
-
 
 template<typename T>
 class FormField : public FormFieldBase {
@@ -38,8 +38,6 @@ public:
         valText.setPosition(position_m.x + 165, position_m.y + 5);
         valText.setFillColor(sf::Color::Black);
         window.draw(valText);
-
-        // שים לב: לא מצוירת כאן הודעת שגיאה, אלא רק בחלון
     }
 
     void setActive(bool active) override {
@@ -60,6 +58,7 @@ public:
     }
 
     void validate() override {
+        // לא צריך לוגיקה כאן, הכל קורה ב-isFieldValid
     }
 
     void set(const std::string& str) override {
@@ -67,14 +66,21 @@ public:
     }
 
     bool isFieldValid() const override {
-        T tempValue{};
-        std::istringstream iss(inputBuffer_m);
-
-        if (!(iss >> tempValue)) {
-            return false;
+        if constexpr (std::is_same_v<T, std::string>) {
+            // טיפול בשדות מחרוזת רגילים
+            return m_validator->validate(inputBuffer_m);
         }
+        else {
+            // טיפול בשדות שדורשים המרה
+            T tempValue{};
+            std::istringstream iss(inputBuffer_m);
 
-        return m_validator->validate(tempValue);
+            if (!(iss >> tempValue)) {
+                return false;
+            }
+
+            return m_validator->validate(tempValue);
+        }
     }
 
     std::string getLabel() const override {
@@ -99,6 +105,8 @@ private:
     T value_m{};
 };
 
+// -------------------- התמחויות מיוחדות ל-Date ------------------------
+
 template<>
 inline void FormField<Date>::set(const std::string& str) {
     if (!Date::fromString(str, value_m)) {
@@ -106,7 +114,6 @@ inline void FormField<Date>::set(const std::string& str) {
     }
     inputBuffer_m = str;
 }
-
 
 template<>
 inline std::string FormField<Date>::getValue() const {

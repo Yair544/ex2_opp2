@@ -22,15 +22,15 @@ UIManager::UIManager(sf::RenderWindow& win, DialogueManager& dManager)
         });
 
     buttons.emplace_back("Car Rental", sf::Vector2f(100, 290), sf::Vector2f(300, 50), sf::Color::Blue, sf::Color::White, [&]() {
-        //formManager.setActiveForm(std::make_unique<CarRentalForm>(window, &formManager));
+        formManager.setActiveForm(std::make_unique<CarRentalForm>(window, &formManager));
         });
 
     buttons.emplace_back("Event Booking", sf::Vector2f(100, 360), sf::Vector2f(300, 50), sf::Color::Blue, sf::Color::White, [&]() {
-        //formManager.setActiveForm(std::make_unique<EventBookingForm>(window, &formManager));
+        formManager.setActiveForm(std::make_unique<EventBookingForm>(window, &formManager));
         });
 
     buttons.emplace_back("Train Booking", sf::Vector2f(100, 430), sf::Vector2f(300, 50), sf::Color::Blue, sf::Color::White, [&]() {
-        //formManager.setActiveForm(std::make_unique<TrainBookingForm>(window, &formManager));
+        formManager.setActiveForm(std::make_unique<TrainBookingForm>(window, &formManager));
         });
 }
 

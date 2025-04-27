@@ -9,6 +9,6 @@ public:
     }
 
     std::string getErrorMessage() const override {
-        return "Room type must be Single, Double, Family, or Presidential Suite.";
+        return "Room type must be Single Room, Double Room, Family Room, or Presidential Suite.";
     }
 };

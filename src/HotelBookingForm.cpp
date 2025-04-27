@@ -12,7 +12,7 @@
 
 HotelBookingForm::HotelBookingForm(sf::RenderWindow& win, DialogueManager* manager)
     : BookingForm(win, manager),
-    roomSelector({ "Single Room", "Double Room", "Suite" }, 10, 500)
+    roomSelector({ "Single Room", "Double Room", "Family Room", "Presidential Suite" }, 10, 500)
 {
     fields.emplace_back(std::make_unique<FormField<std::string>>("Name:", sf::Vector2f(20, 60), std::make_unique<ValidatorName>()));
     fields.emplace_back(std::make_unique<FormField<uint32_t>>("ID:", sf::Vector2f(20, 110), std::make_unique<ValidatorID>()));
@@ -26,6 +26,7 @@ HotelBookingForm::HotelBookingForm(sf::RenderWindow& win, DialogueManager* manag
 
     setDefaultValues();
 }
+
 
 void HotelBookingForm::setDefaultValues() {
     time_t now = time(0);
@@ -42,7 +43,7 @@ void HotelBookingForm::setDefaultValues() {
 
     fields[5]->set(today); // Check-in
     fields[6]->set(today); // Check-out
-    fields[8]->set("Single Room"); // Room Type
+    fields[8]->set("Single Room");
     roomSelector.setSelectedByText("Single Room");
 }
 

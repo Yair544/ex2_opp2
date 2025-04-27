@@ -10,7 +10,7 @@ void DialogueManager::setActiveForm(std::unique_ptr<BookingForm> form) {
     activeForm = std::move(form);
     std::cout << "Opening " << activeForm->getFormType() << " form...\n";
 
-    if (!formWindow.isOpen()) {  // ✅ Fix: Prevent reopening if already open
+    if (!formWindow.isOpen()) {
 
         formWindow.create(sf::VideoMode(850, 900), activeForm->getFormType());
     }
@@ -18,12 +18,12 @@ void DialogueManager::setActiveForm(std::unique_ptr<BookingForm> form) {
 
 void DialogueManager::closeForm() {
     if (formWindow.isOpen()) {
-        formWindow.close();   // ✅ Close the window
+        formWindow.close();
     }
 
     if (activeForm) {
-        activeForm.reset();  // ✅ Properly delete the form
-        activeForm = nullptr; // ✅ Explicitly set to nullptr to prevent dangling pointer
+        activeForm.reset();
+        activeForm = nullptr;
     }
 
     isFormOpen = false;   // ✅ Allow opening a new form later
@@ -39,7 +39,7 @@ void DialogueManager::handleFormEvents() {
     sf::Event event;
     while (formWindow.pollEvent(event)) {
         if (event.type == sf::Event::Closed) {
-            closeForm();  // סגירה רגילה של החלון
+            closeForm();
             return;
         }
 
@@ -48,7 +48,6 @@ void DialogueManager::handleFormEvents() {
         }
     }
 
-    // ❗ בדיקה אם הטופס ביקש לסגור את עצמו (למשל אחרי אישור)
     if (activeForm && activeForm->needsClose()) {
         closeForm();
         return;
